@@ -5,21 +5,19 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       java: 17
-      groups:
-        - android_credentials
     scripts:
-      - name: Set Android SDK environment
+      - name: Set Android SDK & Environment Files
         script: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          if [ ! -f .env ]; then
+            cp .env.example .env || touch .env
+          fi
       - name: Make Gradle Wrapper Executable
         script: |
           chmod +x gradlew
-      - name: Build Debug APK
+      - name: Build Debug and Release APK
         script: |
-          ./gradlew assembleDebug --no-daemon
-      - name: Build Release APK
-        script: |
-          ./gradlew assembleRelease --no-daemon
+          ./gradlew assembleDebug assembleRelease --no-daemon
     artifacts:
       - app/build/outputs/**/*.apk
       - app/build/outputs/**/*.aab
