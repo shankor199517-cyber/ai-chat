@@ -1,0 +1,6 @@
+{
+  "name": "ChatGPT AI",
+  "description": "Smart ChatGPT AI with Voice Input, TTS, Offline Mode, Keyboard Overlap Handling, and Intel HTML Export",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
