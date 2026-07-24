@@ -18,9 +18,14 @@ workflows:
           if [ ! -f debug.keystore ]; then
             keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
           fi
-      - name: Make Gradle Wrapper Executable
+      - name: Make Gradle Wrapper Executable and Repair Wrapper Jar
         script: |
           chmod +x gradlew
+          if ! jar tf gradle/wrapper/gradle-wrapper.jar >/dev/null 2>&1; then
+            echo "⚠️ gradle-wrapper.jar is corrupt or invalid. Auto-repairing wrapper jar..."
+            mkdir -p gradle/wrapper
+            curl -sL "https://raw.githubusercontent.com/gradle/gradle/v8.7.0/gradle/wrapper/gradle-wrapper.jar" -o gradle/wrapper/gradle-wrapper.jar
+          fi
       - name: Build Debug and Release APK
         script: |
           ./gradlew assembleDebug assembleRelease --no-daemon
