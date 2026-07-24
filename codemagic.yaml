@@ -24,7 +24,7 @@ workflows:
           if ! jar tf gradle/wrapper/gradle-wrapper.jar 2>/dev/null | grep -q "GradleWrapperMain"; then
             echo "⚠️ gradle-wrapper.jar is missing or invalid. Regenerating Gradle Wrapper..."
             if command -v gradle >/dev/null 2>&1; then
-              gradle wrapper --gradle-version 8.7
+              gradle wrapper --gradle-version 9.3.1
             fi
           fi
       - name: Build Debug and Release APK
