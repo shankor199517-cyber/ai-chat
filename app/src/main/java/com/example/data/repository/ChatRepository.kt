@@ -96,17 +96,17 @@ class ChatRepository(
                 }
 
                 val (modelsToTry, promptText) = when (selectedModel) {
-                    "chatgpt-pro" -> Pair(
-                        listOf("gemini-1.5-flash", "gemini-1.5-pro"),
-                        "You are ChatGPT Pro, an elite reasoning AI model. Provide highly thorough, analytical, precise, and well-structured answers in Bengali unless requested otherwise. Use clear markdown formatting, step-by-step logic, and code blocks with ```code``` when answering technical or complex questions."
+                    "chatgpt-pro", "gemini-3.1-pro" -> Pair(
+                        listOf("gemini-3.1-pro-preview", "gemini-3.5-flash"),
+                        "You are ChatGPT Pro / Gemini 3.1 Pro, an elite reasoning AI model. Provide highly thorough, analytical, precise, and well-structured answers in Bengali unless requested otherwise. Use clear markdown formatting, step-by-step logic, and code blocks with ```code``` when answering technical or complex questions."
                     )
-                    "gemini-2.5-pro", "gemini-3.1-pro" -> Pair(
-                        listOf("gemini-1.5-pro", "gemini-1.5-flash"),
-                        "You are Gemini Pro, an advanced reasoning AI assistant. Respond in Bengali unless requested otherwise with clear and balanced explanations."
+                    "gemini-3.5-flash" -> Pair(
+                        listOf("gemini-3.5-flash", "gemini-3.1-pro-preview"),
+                        "You are Gemini 3.5 Flash, a high-speed AI assistant. Respond in Bengali unless requested otherwise with clear and direct answers."
                     )
                     else -> Pair(
-                        listOf("gemini-1.5-flash", "gemini-1.5-pro"),
-                        "You are Gemini Flash, a high-speed AI assistant. Respond in Bengali unless requested otherwise with direct and concise answers."
+                        listOf("gemini-3.5-flash", "gemini-3.1-pro-preview"),
+                        "You are a helpful AI assistant. Respond in Bengali unless requested otherwise with direct and concise answers."
                     )
                 }
 
