@@ -18,17 +18,24 @@ workflows:
           if [ ! -f debug.keystore ]; then
             keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
           fi
-      - name: Make Gradle Wrapper Executable and Repair Wrapper Jar
+      - name: Prepare Gradle Wrapper
         script: |
           chmod +x gradlew
-          if ! jar tf gradle/wrapper/gradle-wrapper.jar >/dev/null 2>&1; then
-            echo "⚠️ gradle-wrapper.jar is corrupt or invalid. Auto-repairing wrapper jar..."
-            mkdir -p gradle/wrapper
-            curl -sL "https://raw.githubusercontent.com/gradle/gradle/v8.7.0/gradle/wrapper/gradle-wrapper.jar" -o gradle/wrapper/gradle-wrapper.jar
+          if ! jar tf gradle/wrapper/gradle-wrapper.jar 2>/dev/null | grep -q "GradleWrapperMain"; then
+            echo "⚠️ gradle-wrapper.jar is missing or invalid. Regenerating Gradle Wrapper..."
+            if command -v gradle >/dev/null 2>&1; then
+              gradle wrapper --gradle-version 8.7
+            fi
           fi
       - name: Build Debug and Release APK
         script: |
-          ./gradlew assembleDebug assembleRelease --no-daemon
+          chmod +x gradlew
+          if ./gradlew assembleDebug assembleRelease --no-daemon; then
+            echo "✅ Build completed with gradlew"
+          else
+            echo "⚠️ gradlew failed, building with system gradle..."
+            gradle assembleDebug assembleRelease --no-daemon
+          fi
     artifacts:
       - app/build/outputs/**/*.apk
       - app/build/outputs/**/*.aab
