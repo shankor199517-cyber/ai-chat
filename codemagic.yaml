@@ -1,22 +1,33 @@
 workflows:
   android-workflow:
-    name: Android Build
+    name: Android APK & AAB Build Workflow
     max_build_duration: 60
-
+    instance_type: mac_mini_m1
     environment:
       java: 17
-
+      groups:
+        - android_credentials
     scripts:
-      - name: Grant execute permission for Gradle
-        script: chmod +x ./gradlew
-
-      - name: Build APK
-        script: ./gradlew assembleDebug
-
+      - name: Set Android SDK environment
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+      - name: Make Gradle Wrapper Executable
+        script: |
+          chmod +x gradlew
+      - name: Build Debug APK
+        script: |
+          ./gradlew assembleDebug --no-daemon
+      - name: Build Release APK
+        script: |
+          ./gradlew assembleRelease --no-daemon
     artifacts:
       - app/build/outputs/**/*.apk
-
+      - app/build/outputs/**/*.aab
+      - app/build/outputs/**/mapping.txt
     publishing:
       email:
         recipients:
-          - your-email@example.com
+          - shankor199517@gmail.com
+        notify:
+          success: true
+          failure: false
