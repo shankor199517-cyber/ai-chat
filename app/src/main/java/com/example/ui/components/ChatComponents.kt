@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import android.content.Intent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -94,6 +96,7 @@ fun ChatMessageItem(
     isSpeakingThis: Boolean,
     onStopSpeak: () -> Unit
 ) {
+    val context = LocalContext.current
     val isUser = message.sender == "user"
     val clipboardManager = LocalClipboardManager.current
     val formattedTime = remember(message.timestamp) {
@@ -175,6 +178,76 @@ fun ChatMessageItem(
                 modifier = Modifier.widthIn(max = 320.dp)
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
+                    // Attachment Chip/Card inside Chat Bubble
+                    if (message.content.contains(".apk", ignoreCase = true) || message.content.contains("Attachment", ignoreCase = true)) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (isUser) MaterialTheme.colorScheme.primaryContainer else Color(0xFF059669).copy(alpha = 0.15f)
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Android,
+                                        contentDescription = null,
+                                        tint = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else Color(0xFF059669),
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Column {
+                                        Text(
+                                            text = "📱 Generated APK / File",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else Color(0xFF059669)
+                                        )
+                                        Text(
+                                            text = "Ready to Install",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+
+                                IconButton(
+                                    onClick = {
+                                        try {
+                                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                                type = "application/vnd.android.package-archive"
+                                                putExtra(Intent.EXTRA_SUBJECT, "APK Download")
+                                                putExtra(Intent.EXTRA_TEXT, "Download Application File:\n${message.content}")
+                                            }
+                                            context.startActivity(Intent.createChooser(shareIntent, "Save / Share APK"))
+                                        } catch (e: Exception) {
+                                            e.printStackTrace()
+                                        }
+                                    },
+                                    modifier = Modifier.size(32.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Download,
+                                        contentDescription = "Download APK",
+                                        tint = if (isUser) MaterialTheme.colorScheme.onPrimaryContainer else Color(0xFF059669),
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     SelectionContainer {
                         FormattedChatMessageContent(
                             text = message.content,

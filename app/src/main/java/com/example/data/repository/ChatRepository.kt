@@ -97,16 +97,16 @@ class ChatRepository(
 
                 val (modelsToTry, promptText) = when (selectedModel) {
                     "chatgpt-pro", "gemini-3.1-pro" -> Pair(
-                        listOf("gemini-3.1-pro-preview", "gemini-3.5-flash"),
+                        listOf("gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash"),
                         "You are ChatGPT Pro / Gemini 3.1 Pro, an elite reasoning AI model. Provide highly thorough, analytical, precise, and well-structured answers in Bengali unless requested otherwise. Use clear markdown formatting, step-by-step logic, and code blocks with ```code``` when answering technical or complex questions."
                     )
                     "gemini-3.5-flash" -> Pair(
-                        listOf("gemini-3.5-flash", "gemini-3.1-pro-preview"),
+                        listOf("gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"),
                         "You are Gemini 3.5 Flash, a high-speed AI assistant. Respond in Bengali unless requested otherwise with clear and direct answers."
                     )
                     else -> Pair(
-                        listOf("gemini-3.5-flash", "gemini-3.1-pro-preview"),
-                        "You are a helpful AI assistant. Respond in Bengali unless requested otherwise with direct and concise answers."
+                        listOf("gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"),
+                        "You are ChatGPT, a helpful AI assistant. Respond in Bengali unless requested otherwise with direct and concise answers."
                     )
                 }
 
